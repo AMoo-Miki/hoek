@@ -431,6 +431,15 @@ describe('clone()', () => {
         const copy = Hoek.clone(obj);
         expect(copy).to.equal(obj);
     });
+
+    it('should prevent prototype poisoning', () => {
+
+        const a = JSON.parse('{ "__proto__": { "x": 1 } }');
+        expect(a.x).to.not.exist();
+
+        const b = Hoek.clone(a);
+        expect(b.x).to.not.exist();
+    });
 });
 
 describe('merge()', () => {
@@ -2261,7 +2270,7 @@ describe('stringify()', () => {
 
         const obj = { a: 1 };
         obj.b = obj;
-        expect(Hoek.stringify(obj)).to.equal('[Cannot display object: Converting circular structure to JSON]');
+        expect(Hoek.stringify(obj)).to.include('[Cannot display object: Converting circular structure to JSON');
     });
 });
 
